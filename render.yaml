@@ -10,3 +10,5 @@ services:
         value: cpu
       - key: AIDETECTOR_MODE_PROFILE
         value: balanced
+      - key: AIDETECTOR_FUSION_MODEL_PATH
+        value: /app/models/fusion_model.json

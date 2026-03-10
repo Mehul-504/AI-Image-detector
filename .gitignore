@@ -17,7 +17,8 @@ venv/
 
 # Runtime outputs
 logs/
-models/
+models/*
+!models/fusion_model.json
 dataset/
 dataset_curated/
 

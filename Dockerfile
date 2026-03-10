@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY pyproject.toml readme.md ./
 COPY src ./src
 COPY aidetector ./aidetector
+COPY models ./models
 COPY start.sh ./start.sh
 
 RUN pip install --upgrade pip && pip install -e ".[api,image]"

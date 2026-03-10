@@ -499,7 +499,7 @@ def _render_web_page() -> str:
     async function refreshLogs() {
       const listEl = document.getElementById("recent_runs");
       try {
-        const resp = await fetch("/v1/logs/recent?limit=15");
+        const resp = await fetch(`${window.location.origin}/v1/logs/recent?limit=15`);
         const data = await resp.json();
         listEl.innerHTML = "";
         (data.runs || []).forEach((run) => {
@@ -543,11 +543,17 @@ def _render_web_page() -> str:
       formData.append("prnu_conf", document.getElementById("prnu_conf").value);
       formData.append("mode_profile", document.getElementById("mode_profile").value);
       try {
-        const resp = await fetch("/v1/analyze/upload", {
+        const resp = await fetch(`${window.location.origin}/v1/analyze/upload`, {
           method: "POST",
           body: formData
         });
-        const data = await resp.json();
+        let data = null;
+        const bodyText = await resp.text();
+        try {
+          data = bodyText ? JSON.parse(bodyText) : {};
+        } catch (parseErr) {
+          data = { error: `Non-JSON response (status ${resp.status}): ${bodyText.slice(0, 220)}` };
+        }
         renderScoreSummary(data);
         resultBox.textContent = JSON.stringify(data, null, 2);
         status.textContent = data.error ? "Completed with error (logged)." : "Completed and logged.";

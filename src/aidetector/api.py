@@ -499,8 +499,14 @@ def _render_web_page() -> str:
     async function refreshLogs() {
       const listEl = document.getElementById("recent_runs");
       try {
-        const resp = await fetch(`${window.location.origin}/v1/logs/recent?limit=15`);
-        const data = await resp.json();
+        const resp = await fetch(`/v1/logs/recent?limit=15`);
+        const bodyText = await resp.text();
+        let data = {};
+        try {
+          data = bodyText ? JSON.parse(bodyText) : {};
+        } catch (parseErr) {
+          data = { runs: [] };
+        }
         listEl.innerHTML = "";
         (data.runs || []).forEach((run) => {
           const li = document.createElement("li");
@@ -543,7 +549,7 @@ def _render_web_page() -> str:
       formData.append("prnu_conf", document.getElementById("prnu_conf").value);
       formData.append("mode_profile", document.getElementById("mode_profile").value);
       try {
-        const resp = await fetch(`${window.location.origin}/v1/analyze/upload`, {
+        const resp = await fetch(`/v1/analyze/upload`, {
           method: "POST",
           body: formData
         });

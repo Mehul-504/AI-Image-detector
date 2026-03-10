@@ -1,0 +1,36 @@
+{
+  "media_type": "image",
+  "media_uri": "/absolute/path/to/image.jpg",
+  "provided_scores": {
+    "provenance": {
+      "risk": 10,
+      "confidence": 90,
+      "rationale": "placeholder until C2PA module is connected"
+    },
+    "metadata": {
+      "risk": 20,
+      "confidence": 70,
+      "rationale": "placeholder until metadata analyzer is connected"
+    },
+    "prnu": {
+      "risk": 25,
+      "confidence": 65,
+      "rationale": "placeholder until PRNU module is connected"
+    },
+    "frequency": {
+      "risk": 30,
+      "confidence": 68,
+      "rationale": "placeholder until frequency module is connected"
+    },
+    "spatial": {
+      "risk": 28,
+      "confidence": 72,
+      "rationale": "placeholder until spatial module is connected"
+    },
+    "tamper_localization": {
+      "risk": 26,
+      "confidence": 66,
+      "rationale": "placeholder until localization model is connected"
+    }
+  }
+}

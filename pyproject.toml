@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aidetector"
+version = "0.1.0"
+description = "AI image/video authenticity risk detection scaffold"
+readme = "readme.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+image = [
+  "numpy>=1.26.0",
+  "opencv-python-headless>=4.10.0.84",
+  "torch>=2.4.0",
+  "transformers>=4.44.0",
+  "Pillow>=10.0.0",
+]
+api = [
+  "fastapi>=0.116.0",
+  "python-multipart>=0.0.9",
+  "uvicorn[standard]>=0.30.0",
+]
+dev = [
+  "pytest>=8.2.0",
+]
+
+[project.scripts]
+aidetector = "aidetector.cli:main"
+aidetector-eval = "aidetector.eval_dataset:main"
+aidetector-train-fusion = "aidetector.train_fusion:main"
+aidetector-curate-dataset = "aidetector.curate_dataset:main"
+aidetector-train-cycle = "aidetector.run_training_cycle:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

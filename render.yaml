@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: ai-detector-api
+    env: docker
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: AIDETECTOR_DEVICE
+        value: cpu
+      - key: AIDETECTOR_MODE_PROFILE
+        value: balanced

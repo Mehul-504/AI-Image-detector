@@ -12,3 +12,7 @@ services:
         value: balanced
       - key: AIDETECTOR_FUSION_MODEL_PATH
         value: /app/models/fusion_model.json
+      - key: AIDETECTOR_ENABLE_CLIP
+        value: "0"
+      - key: AIDETECTOR_ENABLE_FORENSIC_TRANSFORMER
+        value: "0"

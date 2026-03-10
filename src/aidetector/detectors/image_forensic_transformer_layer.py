@@ -192,6 +192,12 @@ class ImageForensicTransformerDetector(Detector):
         model_id_or_path: str | None = None,
         preferred_device: str | None = None,
     ) -> None:
+        self.enabled = os.getenv("AIDETECTOR_ENABLE_FORENSIC_TRANSFORMER", "1").strip().lower() in {
+            "1",
+            "true",
+            "yes",
+            "on",
+        }
         self.model_id_or_path = (
             model_id_or_path
             or os.getenv("AIDETECTOR_IMAGE_FORENSIC_MODEL")
@@ -279,6 +285,15 @@ class ImageForensicTransformerDetector(Detector):
     def run(self, context: DetectionContext) -> DetectionResult:
         if context.media_type != MediaType.IMAGE:
             return DetectionResult(scores={}, override_hints=OverrideHints())
+        if not self.enabled:
+            return DetectionResult(
+                scores={
+                    Category.FORENSIC_TRANSFORMER: neutral_score(
+                        "forensic transformer disabled by env:AIDETECTOR_ENABLE_FORENSIC_TRANSFORMER"
+                    )
+                },
+                override_hints=OverrideHints(),
+            )
 
         precomputed = context.provided_scores.get(Category.FORENSIC_TRANSFORMER)
         if precomputed is not None:

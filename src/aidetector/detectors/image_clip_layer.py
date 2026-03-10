@@ -36,6 +36,7 @@ class ImageClipAnomalyDetector(Detector):
         model_id: str | None = None,
         preferred_device: str | None = None,
     ) -> None:
+        self.enabled = os.getenv("AIDETECTOR_ENABLE_CLIP", "1").strip().lower() in {"1", "true", "yes", "on"}
         self.model_id = model_id or os.getenv("AIDETECTOR_CLIP_MODEL_ID", "openai/clip-vit-base-patch32")
         self.preferred_device = preferred_device or os.getenv("AIDETECTOR_DEVICE", "auto")
         self._loaded = False
@@ -110,6 +111,11 @@ class ImageClipAnomalyDetector(Detector):
     def run(self, context: DetectionContext) -> DetectionResult:
         if context.media_type != MediaType.IMAGE:
             return DetectionResult(scores={}, override_hints=OverrideHints())
+        if not self.enabled:
+            return DetectionResult(
+                scores={Category.CLIP_ANOMALY: neutral_score("clip disabled by env:AIDETECTOR_ENABLE_CLIP")},
+                override_hints=OverrideHints(),
+            )
 
         precomputed = context.provided_scores.get(Category.CLIP_ANOMALY)
         if precomputed is not None:

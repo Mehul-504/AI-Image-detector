@@ -19,9 +19,7 @@ COPY pyproject.toml readme.md ./
 COPY src ./src
 COPY aidetector ./aidetector
 COPY models ./models
-COPY start.sh ./start.sh
-
 RUN pip install --upgrade pip && pip install -e ".[api,image]"
 
-EXPOSE 8000
-CMD ["./start.sh"]
+EXPOSE 10000
+CMD ["sh", "-c", "python -m uvicorn aidetector.api:app --host 0.0.0.0 --port ${PORT:-10000}"]

@@ -29,12 +29,19 @@ class PrnuLayerDetector(Detector):
         # Patch noise stationarity: camera PRNU tends to be more stationary than synthetic artifacts.
         h, w = residual.shape
         patch = max(8, min(48, h, w))
-        ph = max(1, h // patch)
-        pw = max(1, w // patch)
+        ph = h // patch
+        pw = w // patch
         cropped_h = ph * patch
         cropped_w = pw * patch
-        cropped = residual[:cropped_h, :cropped_w]
-        if cropped_h >= patch and cropped_w >= patch and cropped.size > 0:
+        cropped = residual[:cropped_h, :cropped_w] if cropped_h > 0 and cropped_w > 0 else None
+        if (
+            cropped is not None
+            and ph > 0
+            and pw > 0
+            and cropped_h >= patch
+            and cropped_w >= patch
+            and cropped.size == (ph * patch * pw * patch)
+        ):
             patches = cropped.reshape(ph, patch, pw, patch)
             stds = patches.std(axis=(1, 3))
             stationarity = 1.0 - float(stds.std() / (stds.mean() + 1e-6))
@@ -56,7 +63,7 @@ class PrnuLayerDetector(Detector):
         periodic = clamp01((p99 / p95 - 1.0) / 1.5)
 
         risk01 = clamp01(0.62 * (1.0 - stationarity) + 0.38 * periodic)
-        patch_count = max(1, ph * pw)
+        patch_count = max(1, int(ph) * int(pw))
         reliability = clamp01(1.0 - max(0.0, edge_corr - 0.62) / 0.38)
         conf01 = clamp01(
             (0.26 + 0.34 * min(1.0, patch_count / 20.0) + 0.22 * periodic + 0.18 * stationarity)

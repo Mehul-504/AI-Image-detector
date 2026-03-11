@@ -192,7 +192,7 @@ class ImageForensicTransformerDetector(Detector):
         model_id_or_path: str | None = None,
         preferred_device: str | None = None,
     ) -> None:
-        self.enabled = os.getenv("AIDETECTOR_ENABLE_FORENSIC_TRANSFORMER", "1").strip().lower() in {
+        self.enabled = os.getenv("AIDETECTOR_ENABLE_FORENSIC_TRANSFORMER", "0").strip().lower() in {
             "1",
             "true",
             "yes",

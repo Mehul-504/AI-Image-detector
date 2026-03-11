@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import asyncio
 import json
+import os
 from pathlib import Path
 from typing import Any, Optional
 
@@ -637,7 +639,31 @@ if FastAPI is not None:
             "provided_scores": provided_scores,
             "mode_profile": mode_profile,
         }
-        return analyze_payload(payload, source="web_upload", run_id=run_id)
+        timeout_sec = float(os.getenv("AIDETECTOR_REQUEST_TIMEOUT_SEC", "22"))
+        try:
+            return await asyncio.wait_for(
+                asyncio.to_thread(analyze_payload, payload, source="web_upload", run_id=run_id),
+                timeout=timeout_sec,
+            )
+        except TimeoutError:
+            run_file = logger.log_run(
+                run_id=run_id,
+                source="web_upload",
+                payload=payload,
+                result=None,
+                error={
+                    "type": "TimeoutError",
+                    "message": f"analysis timed out after {timeout_sec:.0f}s; try smaller image or lower model load",
+                },
+            )
+            return {
+                "error": {
+                    "type": "TimeoutError",
+                    "message": f"analysis timed out after {timeout_sec:.0f}s; request aborted safely",
+                },
+                "run_id": run_id,
+                "log_file": str(run_file),
+            }
 
     @app.get("/v1/logs/recent")
     def recent_logs(limit: int = 20) -> dict[str, Any]:

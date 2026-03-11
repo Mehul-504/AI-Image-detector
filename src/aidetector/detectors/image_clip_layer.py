@@ -36,7 +36,7 @@ class ImageClipAnomalyDetector(Detector):
         model_id: str | None = None,
         preferred_device: str | None = None,
     ) -> None:
-        self.enabled = os.getenv("AIDETECTOR_ENABLE_CLIP", "1").strip().lower() in {"1", "true", "yes", "on"}
+        self.enabled = os.getenv("AIDETECTOR_ENABLE_CLIP", "0").strip().lower() in {"1", "true", "yes", "on"}
         self.model_id = model_id or os.getenv("AIDETECTOR_CLIP_MODEL_ID", "openai/clip-vit-base-patch32")
         self.preferred_device = preferred_device or os.getenv("AIDETECTOR_DEVICE", "auto")
         self._loaded = False

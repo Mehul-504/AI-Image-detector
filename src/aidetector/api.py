@@ -560,6 +560,9 @@ def _render_web_page() -> str:
         } catch (parseErr) {
           data = { error: `Non-JSON response (status ${resp.status}): ${bodyText.slice(0, 220)}` };
         }
+        if (!data || Object.keys(data).length === 0) {
+          data = { error: `Empty response (status ${resp.status}).` };
+        }
         renderScoreSummary(data);
         resultBox.textContent = JSON.stringify(data, null, 2);
         status.textContent = data.error ? "Completed with error (logged)." : "Completed and logged.";

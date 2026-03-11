@@ -123,10 +123,17 @@ def patchwise_mean(values: Any, patch: int = 32) -> Any:
     if np is None:
         return values
     h, w = values.shape[:2]
-    ph = max(1, h // patch)
-    pw = max(1, w // patch)
+    if h <= 0 or w <= 0:
+        return np.zeros((1, 1), dtype=np.float32)
+    if h < patch or w < patch:
+        return np.array([[float(np.mean(values))]], dtype=np.float32)
+
+    ph = h // patch
+    pw = w // patch
     small_h = ph * patch
     small_w = pw * patch
+    if small_h <= 0 or small_w <= 0:
+        return np.array([[float(np.mean(values))]], dtype=np.float32)
     cropped = values[:small_h, :small_w]
     reshaped = cropped.reshape(ph, patch, pw, patch)
     return reshaped.mean(axis=(1, 3))
